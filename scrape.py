@@ -1,18 +1,15 @@
+import json
 import os
-
-from bs4 import BeautifulSoup
 import urllib2
-from PIL import Image, ImageFont, ImageDraw, ImageOps
-import textwrap
+from PIL import Image, ImageOps
 
-apodUrl = 'https://apod.nasa.gov/apod/'
+apodUrl = 'https://api.nasa.gov/planetary/apod?api_key=JDn9Yk3fwuUBMeq4Mrn9b2RFdli8JM49HQoPDGN6'
 screenResolution = [1920, 1080]
 
-html_data = urllib2.urlopen(apodUrl, 'r').read()
-soup = BeautifulSoup(html_data, 'html.parser')
-print(soup)
-a = soup.find('img').parent
-imgUrl = apodUrl + a["href"]
+response = urllib2.urlopen(apodUrl)
+data = json.load(response)
+
+imgUrl = data["hdurl"]
 
 image = urllib2.urlopen(imgUrl)
 output = open('image.jpg', "wb")
@@ -34,8 +31,8 @@ astroImg = ImageOps.expand(astroImg, border=2, fill='white')
 # move astroimg to center horizontally and to upper vertical
 translateX = (screenResolution[0] - newWidth) / 2
 translateY = (screenResolution[1] - newHeight) / 4
-bottomOfAstroImg = translateY + (newHeight);
-bg.paste(astroImg, [translateX, translateY]);
+bottomOfAstroImg = translateY + newHeight
+bg.paste(astroImg, [translateX, translateY])
 
 # font = ImageFont.truetype("/usr/share/fonts/truetype/ubuntu/Ubuntu-L.ttf", 15)
 #
